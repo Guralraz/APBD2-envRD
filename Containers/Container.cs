@@ -1,32 +1,37 @@
-﻿namespace APBD2_envRD.Containers;
+﻿using APBD2_envRD.Exceptions;
+
+namespace APBD2_envRD.Containers;
 
 public abstract class Container
 {
-    protected Container(double loadMass, int height, double tareWeight, int depth, string serialNumber,
-        double maxLoadCapacity)
+    private static int _containerCounter = 0; // Static counter to ensure unique ID for each container
+    public double LoadMass { get; protected set; }
+    public int Height { get; set; }
+    public double OwnWeight { get; set; }
+    public int Depth { get; set; }
+    public string SerialNumber { get; protected set; }
+    public double MaxLoadCapacity { get; set; }
+
+    protected Container(string typeIndicator)
     {
-        LoadMass = loadMass;
-        Height = height;
-        TareWeight = tareWeight;
-        Depth = depth;
-        SerialNumber = serialNumber;
-        MaxLoadCapacity = maxLoadCapacity;
+        SerialNumber = GenerateSerialNumber(typeIndicator);
     }
 
-    public double LoadMass { get; protected set; }
-    public int Height { get; protected set; }
-    public double TareWeight { get; protected set; } // Container's own weight
-    public int Depth { get; protected set; }
-    public string SerialNumber { get; protected set; }
-    public double MaxLoadCapacity { get; protected set; }
-
-    public abstract void Load(double mass);
-    public abstract void Unload();
-}
-
-public class OverfillException : Exception
-{
-    public OverfillException(string message) : base(message)
+    private static string GenerateSerialNumber(string typeIndicator)
     {
+        _containerCounter++; // Increment the counter for each new container
+        return $"KON-{typeIndicator}-{_containerCounter}";
+    }
+
+    public virtual void Load(double mass)
+    {
+        if (mass > MaxLoadCapacity)
+            throw new OverfillException("Cannot load more than the maximum capacity.");
+        LoadMass = mass;
+    }
+
+    public virtual void Unload()
+    {
+        LoadMass = 0;
     }
 }

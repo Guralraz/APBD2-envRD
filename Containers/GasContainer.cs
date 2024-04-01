@@ -1,35 +1,36 @@
-﻿using APBD2_envRD.HazardNotifiers;
+﻿using APBD2_envRD.Exceptions;
+using APBD2_envRD.HazardNotifiers;
 
 namespace APBD2_envRD.Containers;
 
 public class GasContainer : Container, IHazardNotifier
 {
-    public double Pressure { get; set; } // Pressure in atmospheres
+    public double Pressure { get; set; }
 
-    public GasContainer(double loadMass, int height, double tareWeight, int depth, string serialNumber, double maxLoadCapacity, double pressure)
-        : base(loadMass, height, tareWeight, depth, serialNumber, maxLoadCapacity)
+    public GasContainer() : base("G") // Use "G" for GasContainer
     {
-        Pressure = pressure;
     }
 
     public override void Load(double mass)
     {
         if (mass > MaxLoadCapacity)
         {
-            NotifyHazard($"Attempt to overload a gas container: {SerialNumber}");
-            throw new OverfillException("Exceeded maximum allowed load.");
+            NotifyHazard("Attempted to load gas over maximum capacity.");
+            throw new OverfillException("Cannot load gas over maximum capacity.");
         }
-        LoadMass = mass;
+
+        base.Load(mass);
     }
 
     public override void Unload()
     {
-        // Leave 5% of the gas load
-        LoadMass *= 0.05;
+        // Leave 5% of the load inside the container
+        LoadMass = LoadMass * 0.05;
     }
 
     public void NotifyHazard(string message)
     {
-        Console.WriteLine($"Hazard Alert for {SerialNumber}: {message}");
+        // Implementation to notify about hazardous condition
+        Console.WriteLine($"Hazard Notification for {SerialNumber}: {message}");
     }
 }

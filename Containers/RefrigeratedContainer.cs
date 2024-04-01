@@ -1,15 +1,14 @@
-﻿namespace APBD2_envRD.Containers;
+﻿using APBD2_envRD.Exceptions;
+
+namespace APBD2_envRD.Containers;
 
 public class RefrigeratedContainer : Container
 {
     public string ProductType { get; set; }
-    public double Temperature { get; set; } // Temperature maintained in the container
+    public double Temperature { get; set; }
 
-    public RefrigeratedContainer(double loadMass, int height, double tareWeight, int depth, string serialNumber, double maxLoadCapacity, string productType, double temperature)
-        : base(loadMass, height, tareWeight, depth, serialNumber, maxLoadCapacity)
+    public RefrigeratedContainer() : base("C") // Use "C" for RefrigeratedContainer
     {
-        ProductType = productType;
-        Temperature = temperature;
     }
 
     public override void Load(double mass)

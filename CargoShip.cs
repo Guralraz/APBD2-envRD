@@ -23,7 +23,7 @@ public class CargoShip
             throw new Exception("Cannot add more containers. Capacity full.");
         }
 
-        double totalWeight = Containers.Sum(c => c.LoadMass + c.TareWeight) + container.LoadMass + container.TareWeight;
+        double totalWeight = Containers.Sum(c => c.LoadMass + c.OwnWeight) + container.LoadMass + container.OwnWeight;
         if (totalWeight > MaxLoadWeight * 1000) // Assuming MaxLoadWeight is in tons
         {
             throw new Exception("Exceeds maximum load weight of the ship.");
@@ -32,5 +32,52 @@ public class CargoShip
         Containers.Add(container);
     }
 
-    // Implement additional required operations here...
+    public void RemoveContainer(string serialNumber)
+    {
+        var containerToRemove = Containers.FirstOrDefault(c => c.SerialNumber == serialNumber);
+        if (containerToRemove != null)
+        {
+            Containers.Remove(containerToRemove);
+        }
+        else
+        {
+            throw new Exception($"Container with serial number {serialNumber} not found.");
+        }
+    }
+
+    // Method to unload a specific container
+    public void UnloadContainer(string serialNumber)
+    {
+        var container = Containers.FirstOrDefault(c => c.SerialNumber == serialNumber);
+        if (container != null)
+        {
+            container.Unload();
+        }
+        else
+        {
+            throw new Exception($"Container with serial number {serialNumber} not found.");
+        }
+    }
+
+    // Method to replace a container on the ship with another container
+    public void ReplaceContainer(string serialNumber, Container newContainer)
+    {
+        RemoveContainer(serialNumber);
+        LoadContainer(newContainer);
+    }
+
+    // Method to transfer a container from this ship to another ship
+    public void TransferContainer(string serialNumber, CargoShip targetShip)
+    {
+        var containerToTransfer = Containers.FirstOrDefault(c => c.SerialNumber == serialNumber);
+        if (containerToTransfer != null)
+        {
+            RemoveContainer(serialNumber);
+            targetShip.LoadContainer(containerToTransfer);
+        }
+        else
+        {
+            throw new Exception($"Container with serial number {serialNumber} not found.");
+        }
+    }
 }
